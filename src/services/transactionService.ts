@@ -12,8 +12,77 @@ import {
   deleteDoc
 } from "firebase/firestore";
 import { v4 as uuidv4 } from 'uuid';
-import { addMonths, startOfMonth, endOfMonth } from 'date-fns';
+import { addMonths, startOfMonth, endOfMonth, setMonth, setYear, getYear, getMonth } from 'date-fns';
 import { InstallmentTransaction, TransactionType, Transaction } from "@/types/finance"; 
+
+
+export const deleteTransactionGroup = async (groupId: string) => {
+  // Busca todas as transações que pertencem a esse grupo
+  const q = query(
+    collection(db, "transactions"), 
+    where("purchaseGroupId", "==", groupId)
+  );
+  
+  const snapshot = await getDocs(q);
+  
+  // Cria um lote para deletar todas de uma vez
+  const batch = writeBatch(db);
+  snapshot.docs.forEach((doc) => {
+    batch.delete(doc.ref);
+  });
+
+  await batch.commit();
+};
+
+
+export const updateTransaction = async (id: string, updates: Partial<Transaction>) => {
+  const ref = doc(db, "transactions", id);
+  await updateDoc(ref, updates);
+};
+
+export const createRecurringFixedCost = async (
+  userId: string,
+  householdId: string,
+  data: {
+    description: string;
+    amount: number;
+    dueDay: number; // Dia do vencimento (ex: 10)
+    currentDate: Date; // Mês de referência (onde começa)
+    category: string;
+  }
+) => {
+  const batch = writeBatch(db);
+  const groupId = uuidv4(); // Para agrupar (saber que todas são "Energia")
+  
+  const startMonth = getMonth(data.currentDate); // 0 = Jan, 1 = Fev...
+  const currentYear = getYear(data.currentDate);
+
+  // Loop do mês atual até o mês 11 (Dezembro)
+  for (let m = startMonth; m <= 11; m++) {
+    const docRef = doc(collection(db, "transactions"));
+    
+    // Cria a data correta: Ano atual, Mês do loop, Dia escolhido
+    const date = new Date(currentYear, m, data.dueDay);
+
+    const transactionData = {
+      id: docRef.id,
+      householdId,
+      userId,
+      description: data.description,
+      amount: data.amount, // Valor inicial (pode ser editado depois)
+      date: date,
+      category: data.category,
+      type: 'FIXED',
+      isPaid: false,
+      purchaseGroupId: groupId, // Link entre elas
+      createdAt: new Date()
+    };
+
+    batch.set(docRef, transactionData);
+  }
+
+  await batch.commit();
+};
 
 /**
  * 1. CRIAR COMPRA PARCELADA (Gera N documentos)
