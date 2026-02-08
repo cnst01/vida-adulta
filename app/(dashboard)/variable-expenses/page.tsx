@@ -80,7 +80,7 @@ export default function VariableExpensesPage() {
     await addSimpleTransaction(user.uid, household.id, {
       description: `Gasto em ${category}`,
       amount: parseFloat(quickAmount),
-      date: new Date(), // Data de hoje
+      date: currentDate, // Data de hoje
       category: category, // A categoria TEM que ser igual a da cota
       type: 'VARIABLE'
     });
