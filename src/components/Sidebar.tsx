@@ -1,6 +1,7 @@
 // src/components/Sidebar.tsx
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation"; // Adicione useRouter
 import { 
@@ -30,7 +31,7 @@ export function Sidebar() {
   };
 
   const menuItems = [
-    { name: "Visão Geral", icon: LayoutDashboard, path: "/" },
+    { name: "Visão Geral", icon: LayoutDashboard, path: "/app" },
     { name: "Custos Fixos", icon: Zap, path: "/fixed-costs" },
     { name: "Compras", icon: ShoppingBag, path: "/purchases" },
     { name: "Variáveis", icon: PieChart, path: "/variable-expenses" },
@@ -44,7 +45,13 @@ export function Sidebar() {
       {/* DESKTOP SIDEBAR */}
       <aside className="hidden md:flex flex-col w-64 h-screen bg-gray-900 border-r border-gray-800 fixed left-0 top-0">
         <div className="p-6 border-b border-gray-800">
-          <h1 className="text-xl font-bold text-blue-500 tracking-wider">FINANÇAS</h1>
+          <Image 
+              src="/logo.png" 
+              alt="Vida Adulta Logo" 
+              width={60}  // Define largura fixa
+              height={60} // Define altura fixa
+              className="rounded-lg shadow-lg shadow-blue-900/50 object-cover"
+          />
         </div>
 
         <nav className="flex-1 p-4 space-y-2">
