@@ -31,8 +31,8 @@ export function Sidebar() {
   };
 
   const menuItems = [
-    { name: "Visão Geral", icon: LayoutDashboard, path: "/app" },
-    { name: "Custos Fixos", icon: Zap, path: "/fixed-costs" },
+    { name: "Geral", icon: LayoutDashboard, path: "/app" },
+    { name: "Contas", icon: Zap, path: "/fixed-costs" },
     { name: "Compras", icon: ShoppingBag, path: "/purchases" },
     { name: "Variáveis", icon: PieChart, path: "/variable-expenses" },
     { name: "Ajustes", icon: Settings, path: "/settings" },
@@ -70,16 +70,6 @@ export function Sidebar() {
             </Link>
           ))}
         </nav>
-
-        <div className="p-4 border-t border-gray-800">
-          <button
-            onClick={handleLogout} // Usa a nova função
-            className="flex items-center gap-3 px-4 py-3 w-full text-red-400 hover:bg-red-900/20 rounded-lg transition"
-          >
-            <LogOut size={20} />
-            <span>Sair</span>
-          </button>
-        </div>
       </aside>
 
       {/* MOBILE NAVBAR */}
@@ -97,14 +87,6 @@ export function Sidebar() {
               <span className="text-[10px]">{item.name}</span>
             </Link>
           ))}
-          {/* Botão de Sair no Mobile também */}
-          <button 
-             onClick={handleLogout}
-             className="flex flex-col items-center justify-center w-full h-full space-y-1 text-red-400"
-          >
-            <LogOut size={20} />
-            <span className="text-[10px]">Sair</span>
-          </button>
         </div>
       </nav>
     </>

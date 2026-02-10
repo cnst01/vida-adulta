@@ -170,7 +170,7 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         
         {/* CARD 1: SALDO REAL */}
-        <div className="lg:col-span-3 bg-gradient-to-br from-gray-900 to-gray-800 p-6 rounded-2xl border border-gray-700 shadow-2xl relative overflow-hidden group">
+        <div className="lg:col-span-3 bg-linear-to-br from-gray-900 to-gray-800 p-6 rounded-2xl border border-gray-700 shadow-2xl relative overflow-hidden group">
           <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition duration-500 transform group-hover:scale-110">
             <Wallet size={150} />
           </div>
@@ -212,7 +212,7 @@ export default function DashboardPage() {
             </div>
             <div>
               <p className="text-2xl font-bold text-white mb-1">R$ {balancePredicted.toFixed(2)}</p>
-              <div className="flex items-center justify-between text-xs mt-2 bg-gray-950 p-2 rounded border border-gray-800">
+              <div className="flex items-center justify-between text-xs mt-2 bg-gray-950 p-2 rounded-xl border border-gray-800">
                 <span className="text-gray-500">Média variáveis:</span>
                 <span className="text-yellow-500 font-bold">R$ {expenseUsedForProjection.toFixed(2)}</span>
               </div>
@@ -231,7 +231,7 @@ export default function DashboardPage() {
             </div>
             <div>
               <p className="text-2xl font-bold text-white mb-1">R$ {balancePlanned.toFixed(2)}</p>
-              <div className="flex items-center justify-between text-xs mt-2 bg-gray-950 p-2 rounded border border-gray-800">
+              <div className="flex items-center justify-between text-xs mt-2 bg-gray-950 p-2 rounded-xl border border-gray-800">
                 <span className="text-gray-500">Teto cotas:</span>
                 <span className="text-blue-500 font-bold">R$ {data.variablePlanned.toFixed(2)}</span>
               </div>
@@ -262,7 +262,7 @@ export default function DashboardPage() {
               </div>
             </div>
           </div>
-          <div className="flex items-center justify-between text-xs mt-2 bg-gray-950 p-2 rounded border border-gray-800">
+          <div className="flex items-center justify-between text-xs mt-2 bg-gray-950 p-2 rounded-xl border border-gray-800">
             <span className="text-gray-500">Fixo + Parcelas:</span>
             <span className="text-purple-500 font-bold">R$ {totalCommitted.toFixed(2)}</span>
           </div>
