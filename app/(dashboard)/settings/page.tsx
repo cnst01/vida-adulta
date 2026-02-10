@@ -18,7 +18,9 @@ import {
   Check, 
   ArrowRight, 
   Users, 
-  Send 
+  Send,
+  DollarSign,
+  Save
 } from "lucide-react";
 
 export default function SettingsPage() {
@@ -28,12 +30,25 @@ export default function SettingsPage() {
 
   // States
   const [copied, setCopied] = useState(false);
-  const [canShare, setCanShare] = useState(false); // Para saber se o navegador suporta share nativo
+  const [canShare, setCanShare] = useState(false); 
 
+  // States de Join
   const [joinId, setJoinId] = useState("");
   const [loadingJoin, setLoadingJoin] = useState(false);
 
-  // Verifica se o navegador suporta o compartilhamento nativo (Geralmente Mobile)
+  // States de Renda
+  const [income, setIncome] = useState("");
+  const [savingIncome, setSavingIncome] = useState(false);
+  const [incomeSaved, setIncomeSaved] = useState(false);
+
+  // Carrega a renda atual quando o household carrega
+  useEffect(() => {
+    if (household?.settings?.monthlyIncome) {
+      setIncome(household.settings.monthlyIncome.toString());
+    }
+  }, [household]);
+
+  // Verifica share nativo
   useEffect(() => {
     if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
       setCanShare(true);
@@ -65,7 +80,31 @@ export default function SettingsPage() {
         text: `Use este código para entrar na minha família: ${household.id}`,
       });
     } catch (error) {
-      console.log('Usuário cancelou ou erro no share', error);
+      console.log('Cancelado/Erro share', error);
+    }
+  };
+
+  const handleSaveIncome = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!household?.id) return;
+
+    setSavingIncome(true);
+    try {
+      const numIncome = parseFloat(income.replace(",", ".")); // Aceita virgula ou ponto
+      if (isNaN(numIncome)) return;
+
+      const householdRef = doc(db, "households", household.id);
+      await updateDoc(householdRef, {
+        "settings.monthlyIncome": numIncome
+      });
+
+      setIncomeSaved(true);
+      setTimeout(() => setIncomeSaved(false), 3000);
+    } catch (error) {
+      console.error("Erro ao salvar renda", error);
+      alert("Erro ao salvar.");
+    } finally {
+      setSavingIncome(false);
     }
   };
 
@@ -131,11 +170,61 @@ export default function SettingsPage() {
         </div>
       </div>
 
+      {/* --- NOVO: RENDA MENSAL --- */}
+      <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 shadow-sm">
+        <div className="flex items-center gap-3 mb-4 text-green-400">
+          <DollarSign size={24} />
+          <h3 className="font-bold text-lg">Renda Mensal Familiar</h3>
+        </div>
+        <p className="text-sm text-gray-400 mb-6 leading-relaxed">
+          Defina o valor total que entra na conta todo mês. Isso será usado para calcular o quanto da sua renda já está comprometido.
+        </p>
+
+        <form onSubmit={handleSaveIncome} className="flex flex-col sm:flex-row gap-3 items-end sm:items-center">
+           {/* Container vira Flex para alinhar os itens lado a lado */}
+          <div className="w-full flex items-center bg-gray-950 border border-gray-700 rounded-xl focus-within:border-green-500 transition-all overflow-hidden">
+            
+            {/* O R$ é um bloco fixo com padding */}
+            <span className="pl-4 pr-1 text-gray-500 font-bold select-none">
+              R$
+            </span>
+
+            {/* O Input perde a borda e o fundo para se fundir ao container */}
+            <input 
+              type="number" 
+              step="0.01"
+              placeholder="0,00"
+              className="w-full bg-transparent border-none outline-none text-white font-mono text-lg py-3 ml-2 pr-4 placeholder-gray-600"
+              value={income}
+              onChange={e => setIncome(e.target.value)}
+            />
+          </div>
+           
+           <button 
+             type="submit"
+             disabled={savingIncome}
+             className={`w-full sm:w-auto px-6 py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-all active:scale-95 shrink-0 ${
+                incomeSaved 
+                  ? "bg-green-600 text-white" 
+                  : "bg-gray-800 hover:bg-gray-700 text-white border border-gray-700"
+             }`}
+           >
+             {savingIncome ? (
+               <div className="animate-spin w-5 h-5 border-2 border-white border-t-transparent rounded-full"/>
+             ) : incomeSaved ? (
+               <> <Check size={20} /> Salvo! </>
+             ) : (
+               <> <Save size={20} /> Salvar </>
+             )}
+           </button>
+        </form>
+      </div>
+
       {/* --- ÁREA DE FAMÍLIA (COMPARTILHAMENTO) --- */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         
-        {/* LADO 1: CONVIDAR (COM BOTÃO SPLIT NO MOBILE) */}
-        <div className="bg-linear-to-br from-blue-900/20 to-gray-900 border border-blue-500/30 rounded-2xl p-6 shadow-md relative overflow-hidden">
+        {/* LADO 1: CONVIDAR */}
+        <div className="bg-gradient-to-br from-blue-900/20 to-gray-900 border border-blue-500/30 rounded-2xl p-6 shadow-md relative overflow-hidden">
            <div className="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-blue-500/10 blur-2xl rounded-full pointer-events-none"></div>
 
            <div className="flex items-center gap-3 mb-4 text-blue-400 relative z-10">
@@ -147,18 +236,15 @@ export default function SettingsPage() {
            </p>
            
            <div className="flex flex-col gap-3 relative z-10">
-             {/* Caixa do Código */}
              <div className="bg-black/40 p-3 rounded-xl border border-blue-500/20 text-center">
                <code className="font-mono text-white tracking-wider text-sm sm:text-base break-all">
                  {household?.id || "Carregando..."}
                </code>
              </div>
 
-             {/* BOTOES DE AÇÃO (SPLIT) */}
              <div className="flex gap-2">
-               
-               {/* Botão Copiar (Sempre aparece) */}
                <button 
+                  type="button"
                   onClick={handleCopyId}
                   className={`flex-1 p-3 rounded-lg transition-all active:scale-95 flex items-center justify-center gap-2 font-medium shadow-lg shadow-blue-900/20 ${
                     copied 
@@ -170,9 +256,9 @@ export default function SettingsPage() {
                  <span>{copied ? "Copiado!" : "Copiar"}</span>
                </button>
 
-               {/* Botão Enviar (Só aparece se o navegador suportar Share) */}
                {canShare && (
                  <button 
+                    type="button"
                     onClick={handleNativeShare}
                     className="flex-1 p-3 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-all active:scale-95 flex items-center justify-center gap-2 font-medium shadow-lg shadow-blue-900/30"
                  >
