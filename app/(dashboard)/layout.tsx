@@ -36,8 +36,6 @@ export default function DashboardLayout({
     );
   }
 
-  // AQUI ESTAVA O ERRO: Removemos <html> e <body>
-  // Retornamos apenas a DIV que estrutura o dashboard
   return (
     <div className="flex min-h-screen bg-gray-950 text-gray-100">
       <Sidebar />

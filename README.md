@@ -1,4 +1,4 @@
-# Finanças Casal 💰
+# Vida Adulta 💰
 
 Sistema de controle financeiro desenvolvido para gestão de gastos familiares compartilhados.
 

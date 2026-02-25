@@ -128,7 +128,7 @@ export default function PurchasesPage() {
       </div>
 
       {/* RESUMO */}
-      <div className="bg-gradient-to-r from-blue-900 to-gray-900 p-6 rounded-xl border border-blue-800 flex justify-between items-center">
+      <div className="bg-linear-to-r from-blue-900 to-gray-900 p-6 rounded-xl border border-blue-800 flex justify-between items-center">
         <div>
           <p className="text-blue-200 text-sm mb-1">Total Parcelado</p>
           <h3 className="text-3xl font-bold text-white">R$ {totalMonth.toFixed(2)}</h3>
@@ -212,7 +212,7 @@ export default function PurchasesPage() {
         )}
       </div>
 
-      {/* MODAL DE NOVA COMPRA (Mantido igual) */}
+      {/* MODAL DE NOVA COMPRA */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
           <div className="bg-gray-900 w-full max-w-md rounded-xl border border-gray-800 p-6">
@@ -221,7 +221,6 @@ export default function PurchasesPage() {
               <button onClick={() => setIsModalOpen(false)}><X className="text-gray-400" /></button>
             </div>
             <form onSubmit={handleSave} className="space-y-4">
-               {/* ... (mesmo form de antes) ... */}
                <div>
                 <label className="text-sm text-gray-400">Descrição</label>
                 <input required className="w-full bg-gray-800 border border-gray-700 rounded p-3 text-white mt-1" 

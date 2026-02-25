@@ -9,7 +9,7 @@ import {
   getMonthlyTransactions, 
   addSimpleTransaction, 
   deleteTransaction, 
-  updateTransaction // <--- Importado
+  updateTransaction
 } from "@/services/transactionService";
 import { Transaction } from "@/types/finance";
 import { format, addMonths, subMonths } from "date-fns";
