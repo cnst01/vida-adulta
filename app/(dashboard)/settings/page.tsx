@@ -224,7 +224,7 @@ export default function SettingsPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         
         {/* LADO 1: CONVIDAR */}
-        <div className="bg-gradient-to-br from-blue-900/20 to-gray-900 border border-blue-500/30 rounded-2xl p-6 shadow-md relative overflow-hidden">
+        <div className="bg-linear-to-br from-blue-900/20 to-gray-900 border border-blue-500/30 rounded-2xl p-6 shadow-md relative overflow-hidden">
            <div className="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-blue-500/10 blur-2xl rounded-full pointer-events-none"></div>
 
            <div className="flex items-center gap-3 mb-4 text-blue-400 relative z-10">

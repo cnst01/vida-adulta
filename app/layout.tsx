@@ -8,7 +8,7 @@ import { HouseholdProvider } from "@/context/HouseholdContext";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Finanças Casal",
+  title: "Vida Adulta",
   description: "Controle financeiro inteligente",
 };
 
