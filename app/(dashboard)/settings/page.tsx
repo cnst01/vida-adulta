@@ -84,7 +84,7 @@ export default function SettingsPage() {
     }
   };
 
-  const handleSaveIncome = async (e: React.FormEvent) => {
+  const handleSaveIncome = async (e: React.SubmitEvent) => {
     e.preventDefault();
     if (!household?.id) return;
 
@@ -108,7 +108,7 @@ export default function SettingsPage() {
     }
   };
 
-  const handleJoinHousehold = async (e: React.FormEvent) => {
+  const handleJoinHousehold = async (e: React.SubmitEvent) => {
     e.preventDefault();
     if (!user || !joinId.trim()) return;
     

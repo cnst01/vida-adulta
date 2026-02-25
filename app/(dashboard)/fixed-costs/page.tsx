@@ -10,7 +10,7 @@ import {
   toggleTransactionStatus, 
   deleteTransaction,
   updateTransaction,
-  deleteTransactionGroup // <--- Importado
+  deleteTransactionGroup
 } from "@/services/transactionService";
 import { Transaction } from "@/types/finance";
 import { format, addMonths, subMonths } from "date-fns";
