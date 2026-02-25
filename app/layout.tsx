@@ -10,6 +10,9 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Vida Adulta",
   description: "Controle financeiro inteligente",
+  other: {
+    google: "notranslate",
+  },
 };
 
 export default function RootLayout({
