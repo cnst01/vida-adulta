@@ -19,12 +19,15 @@ import {
 } from "lucide-react";
 
 import { MiniDonut } from "@/components/DonutGraph";
+import { CalculationModal } from "@/components/CalculationModal";
 
 export default function DashboardPage() {
   const { household } = useHousehold();
   
   const [currentDate, setCurrentDate] = useState(new Date());
   const [loading, setLoading] = useState(true);
+
+  const [modalType, setModalType] = useState<"real" | "predicted" | "planned" | "committed" | null>(null);
   
   const [data, setData] = useState({
     income: 0,
@@ -127,6 +130,60 @@ export default function DashboardPage() {
   const circCommitted = 2 * Math.PI * radiusCommitted;
   const offsetCommitted = circCommitted - (Math.min(percentCommitted, 100) / 100) * circCommitted;
 
+  const modalContents = {
+    real: {
+      title: "Saldo Atual",
+      description: "Este é o dinheiro que você efetivamente tem sobrando na conta hoje, subtraindo tudo o que já foi gasto ou pago neste mês.",
+      example: (
+        <div className="space-y-2 text-gray-300">
+          <div className="flex justify-between border-b border-gray-800 pb-1"><span>Renda Mensal</span> <span className="text-green-400">R$ {data.income.toFixed(2)}</span></div>
+          <div className="flex justify-between"><span>Custos Fixos</span> <span className="text-red-400">- R$ {data.fixed.toFixed(2)}</span></div>
+          <div className="flex justify-between"><span>Parcelas</span> <span className="text-red-400">- R$ {data.installments.toFixed(2)}</span></div>
+          <div className="flex justify-between border-b border-gray-800 pb-1"><span>Gastos Variáveis</span> <span className="text-red-400">- R$ {data.variableReal.toFixed(2)}</span></div>
+          <div className="flex justify-between pt-1 font-bold text-white"><span>Sobrando</span> <span className={healthColor}>= R$ {balanceReal.toFixed(2)}</span></div>
+        </div>
+      )
+    },
+    predicted: {
+      title: "Saldo Previsto",
+      description: "Uma projeção inteligente para o fim do mês. Pegamos suas contas fixas e adicionamos a sua média histórica de gastos variáveis dos últimos 2 meses para tentar adivinhar como o mês vai fechar.",
+      example: (
+        <div className="space-y-2 text-gray-300">
+          <div className="flex justify-between border-b border-gray-800 pb-1"><span>Renda Mensal</span> <span className="text-green-400">R$ {data.income.toFixed(2)}</span></div>
+          <div className="flex justify-between text-gray-400"><span>Fixos + Parcelas</span> <span>- R$ {totalCommitted.toFixed(2)}</span></div>
+          <div className="flex justify-between border-b border-gray-800 pb-1 text-yellow-400"><span>Média Variáveis</span> <span>- R$ {expenseUsedForProjection.toFixed(2)}</span></div>
+          <div className="flex justify-between pt-1 font-bold text-white"><span>Previsão Final</span> <span className="text-yellow-500">= R$ {balancePredicted.toFixed(2)}</span></div>
+        </div>
+      )
+    },
+    planned: {
+      title: "Saldo Planejado",
+      description: "O 'Cenário Ideal'. Mostra exatamente quanto dinheiro vai sobrar se você for disciplinado e respeitar os limites que definiu nas Cotas de Variáveis.",
+      example: (
+        <div className="space-y-2 text-gray-300">
+          <div className="flex justify-between border-b border-gray-800 pb-1"><span>Renda Mensal</span> <span className="text-green-400">R$ {data.income.toFixed(2)}</span></div>
+          <div className="flex justify-between text-gray-400"><span>Fixos + Parcelas</span> <span>- R$ {totalCommitted.toFixed(2)}</span></div>
+          <div className="flex justify-between border-b border-gray-800 pb-1 text-blue-400"><span>Meta (Teto Cotas)</span> <span>- R$ {data.variablePlanned.toFixed(2)}</span></div>
+          <div className="flex justify-between pt-1 font-bold text-white"><span>Meta Final</span> <span className="text-blue-500">= R$ {balancePlanned.toFixed(2)}</span></div>
+        </div>
+      )
+    },
+    committed: {
+      title: "Renda Comprometida (Fixo)",
+      description: "Representa a porcentagem do seu salário que já 'nasceu' gasta. São os custos obrigatórios de sobrevivência mais as faturas parceladas que você já assumiu.",
+      example: (
+        <div className="space-y-2 text-gray-300">
+          <div className="flex justify-between"><span>Custos Fixos</span> <span className="text-purple-400">R$ {data.fixed.toFixed(2)}</span></div>
+          <div className="flex justify-between border-b border-gray-800 pb-1"><span>Parcelas</span> <span className="text-purple-400">+ R$ {data.installments.toFixed(2)}</span></div>
+          <div className="flex justify-between pt-1 font-bold text-white"><span>Total Comprometido</span> <span>= R$ {totalCommitted.toFixed(2)}</span></div>
+          <div className="mt-4 p-2 bg-purple-500/10 rounded text-center text-purple-400">
+            Isso representa <strong>{percentCommitted.toFixed(1)}%</strong> da sua renda de R$ {data.income.toFixed(2)}
+          </div>
+        </div>
+      )
+    }
+  };
+
   return (
     <div className="space-y-6 pb-20 animate-in fade-in slide-in-from-bottom-4 duration-500">
       
@@ -145,7 +202,10 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         
         {/* CARD 1: SALDO REAL */}
-        <div className="lg:col-span-3 bg-linear-to-br from-gray-900 to-gray-800 p-6 rounded-2xl border border-gray-700 shadow-2xl relative overflow-hidden group">
+        <div 
+          className="lg:col-span-3 bg-linear-to-br from-gray-900 to-gray-800 p-6 rounded-2xl border border-gray-700 shadow-2xl relative overflow-hidden group"
+          onClick={() => setModalType("real")}
+        >
           <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition duration-500 transform group-hover:scale-110">
             <Wallet size={150} />
           </div>
@@ -177,7 +237,10 @@ export default function DashboardPage() {
         </div>
 
         {/* CARD 2: PREVISÃO */}
-        <div className="bg-gray-900 p-5 rounded-xl border border-gray-800 flex flex-col justify-between hover:border-yellow-500/30 transition group">
+        <div 
+          className="bg-gray-900 p-5 rounded-xl border border-gray-800 flex flex-col justify-between hover:border-yellow-500/30 transition group"
+          onClick={() => setModalType("predicted")}
+        >
           <div>
             <div className="flex items-center gap-2 mb-3 pb-3 border-b border-gray-800">
               <div className="p-2 bg-yellow-500/10 rounded-lg text-yellow-500">
@@ -196,7 +259,10 @@ export default function DashboardPage() {
         </div>
 
         {/* CARD 3: PLANEJADO */}
-        <div className="bg-gray-900 p-5 rounded-xl border border-gray-800 flex flex-col justify-between hover:border-blue-500/30 transition group">
+        <div 
+          className="bg-gray-900 p-5 rounded-xl border border-gray-800 flex flex-col justify-between hover:border-blue-500/30 transition group"
+          onClick={() => setModalType("planned")}
+        >
           <div>
              <div className="flex items-center gap-2 mb-3 pb-3 border-b border-gray-800">
               <div className="p-2 bg-blue-500/10 rounded-lg text-blue-500">
@@ -215,7 +281,10 @@ export default function DashboardPage() {
         </div>
 
         {/* CARD 4: COMPROMETIDO (FIXO + PARCELAS) */}
-        <div className="bg-gray-900 p-5 rounded-xl border border-gray-800 flex flex-col justify-between hover:border-purple-500/30 transition group">
+        <div 
+          className="bg-gray-900 p-5 rounded-xl border border-gray-800 flex flex-col justify-between hover:border-purple-500/30 transition group"
+          onClick={() => setModalType("committed")}
+        >
           <div>
              <div className="flex items-center gap-2 mb-3 pb-3 border-b border-gray-800">
               <div className="p-2 bg-purple-500/10 rounded-lg text-purple-500">
@@ -312,6 +381,16 @@ export default function DashboardPage() {
           </div>
         </Link>
       </div>
+
+      {modalType && (
+        <CalculationModal 
+          isOpen={!!modalType} 
+          onClose={() => setModalType(null)}
+          title={modalContents[modalType].title}
+          description={modalContents[modalType].description}
+          example={modalContents[modalType].example}
+        />
+      )}
       
     </div>
   );

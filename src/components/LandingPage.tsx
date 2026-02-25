@@ -59,7 +59,7 @@ export function LandingPage() {
           
           <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 leading-tight">
             A vida adulta é difícil.<br />
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
+            <span className="bg-clip-text text-transparent bg-linear-to-r from-blue-400 to-purple-400">
               Seu dinheiro não precisa ser.
             </span>
           </h1>
@@ -156,7 +156,7 @@ export function LandingPage() {
       {/* --- DETALHE DA FAMÍLIA (Feature Highlight) --- */}
       <section className="py-24">
         <div className="container mx-auto px-6">
-          <div className="bg-gradient-to-br from-gray-900 to-black p-8 md:p-12 rounded-3xl border border-gray-800 flex flex-col md:flex-row items-center gap-12">
+          <div className="bg-linear-to-br from-gray-900 to-black p-8 md:p-12 rounded-3xl border border-gray-800 flex flex-col md:flex-row items-center gap-12">
             <div className="flex-1 space-y-6">
               <div className="inline-block p-3 rounded-lg bg-blue-900/20 text-blue-400 mb-2">
                 <Share2 size={32} />
